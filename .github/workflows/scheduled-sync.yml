@@ -1,0 +1,27 @@
+name: Scheduled Upstream Sync
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Every day at 00:00 UTC
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync Main Branch with Upstream
+        run: |
+          # Configure Git
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Clone the repository and checkout main
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git repo
+          cd repo
+          git remote add upstream https://github.com/Homebrew/homebrew-cask.git
+          
+          # Sync main branch
+          git checkout main
+          git fetch upstream main
+          git reset --hard upstream/main
+          git push origin main --force
