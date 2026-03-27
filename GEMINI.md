@@ -1,4 +1,4 @@
-# CLAUDE.md
+# GEMINI.md
 
 이 저장소는 개인용 Homebrew Cask 저장소입니다.
 Cask 파일을 추가하거나 수정할 때는 아래 규칙을 반드시 따릅니다.
