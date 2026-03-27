@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    name: Detect changed casks
+    runs-on: ubuntu-latest
+    outputs:
+      casks: ${{ steps.changed.outputs.casks }}
+      has_casks: ${{ steps.changed.outputs.has_casks }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed cask files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            files=$(find Casks -name "*.rb" | sort)
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'Casks/**/*.rb')
+          else
+            files=$(git diff --name-only HEAD~1 HEAD -- 'Casks/**/*.rb')
+          fi
+
+          if [ -z "$files" ]; then
+            echo "has_casks=false" >> "$GITHUB_OUTPUT"
+            echo "casks=[]" >> "$GITHUB_OUTPUT"
+          else
+            # token 추출: "Casks/g/gemini-alexcding.rb" → "gemini-alexcding"
+            tokens=$(echo "$files" | sed 's|Casks/[^/]*/||;s|\.rb$||')
+            json=$(echo "$tokens" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "has_casks=true" >> "$GITHUB_OUTPUT"
+            echo "casks=$json" >> "$GITHUB_OUTPUT"
+          fi
+
+  style:
+    name: Style (${{ matrix.cask }})
+    needs: detect
+    if: needs.detect.outputs.has_casks == 'true'
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cask: ${{ fromJSON(needs.detect.outputs.casks) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Cache Homebrew style cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew/style
+          key: brew-style-${{ hashFiles(format('Casks/{0}/{1}.rb', matrix.cask[0], matrix.cask)) }}
+          restore-keys: brew-style-
+
+      - name: Run brew style
+        run: |
+          brew style "Casks/${CASK:0:1}/$CASK.rb"
+        env:
+          CASK: ${{ matrix.cask }}
+
+  audit:
+    name: Audit (${{ matrix.cask }})
+    needs: detect
+    if: needs.detect.outputs.has_casks == 'true'
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        cask: ${{ fromJSON(needs.detect.outputs.casks) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Sync Casks to registered tap
+        run: |
+          tap_dir="$(brew --repository leejongyoung/cask)"
+          rsync -a "$GITHUB_WORKSPACE/Casks/" "$tap_dir/Casks/"
+
+      - name: Run brew audit
+        run: brew audit --cask --online "leejongyoung/cask/${{ matrix.cask }}"
+        timeout-minutes: 10

@@ -1,0 +1,31 @@
+name: Sync from Homebrew/homebrew-cask
+
+on:
+  schedule:
+    - cron: "0 0 * * *" # 매일 UTC 00:00 (KST 09:00)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    name: Sync homebrew/homebrew-cask → homebrew branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch upstream and push to homebrew branch
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git remote add upstream https://github.com/Homebrew/homebrew-cask.git
+          git fetch upstream main
+          git checkout -B homebrew upstream/main
+          git rm -rf .github/workflows/
+          git commit -m "chore: remove upstream workflow files"
+          git push origin homebrew --force
