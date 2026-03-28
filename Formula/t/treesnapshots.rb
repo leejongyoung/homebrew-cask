@@ -1,4 +1,4 @@
-class Treesnap < Formula
+class Treesnapshots < Formula
   desc "Track and version local file structures, sizes, and metadata"
   homepage "https://github.com/leejongyoung/TreeSnapshots"
   url "https://github.com/leejongyoung/TreeSnapshots/releases/download/v2.0.0/treesnap-macos-universal.tar.gz"
