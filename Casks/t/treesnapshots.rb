@@ -1,6 +1,6 @@
 cask "treesnapshots" do
-  version "2.0.0"
-  sha256 "09e91d9f9425d069105686b102e7b36c5a97a3b2bc2b92fec262c286bc936442"
+  version "2.0.3"
+  sha256 "e2130faf5093a3023ba49eed8e44e1ff3c6acf14778dbb8156db07d6f23a90d9"
 
   url "https://github.com/leejongyoung/TreeSnapshots/releases/download/v#{version}/TREESNAPSHOTS_#{version}_universal.dmg"
   name "TREESNAPSHOTS"

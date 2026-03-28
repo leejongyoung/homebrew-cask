@@ -29,9 +29,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             files=$(find Casks -name "*.rb" | sort)
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'Casks/**/*.rb')
+            files=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- 'Casks/**/*.rb')
           else
-            files=$(git diff --name-only HEAD~1 HEAD -- 'Casks/**/*.rb')
+            files=$(git diff --name-only --diff-filter=d HEAD~1 HEAD -- 'Casks/**/*.rb')
           fi
 
           if [ -z "$files" ]; then
@@ -63,9 +63,9 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             files=$(find Formula -name "*.rb" 2>/dev/null | sort)
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
-            files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'Formula/**/*.rb')
+            files=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- 'Formula/**/*.rb')
           else
-            files=$(git diff --name-only HEAD~1 HEAD -- 'Formula/**/*.rb')
+            files=$(git diff --name-only --diff-filter=d HEAD~1 HEAD -- 'Formula/**/*.rb')
           fi
 
           if [ -z "$files" ]; then
