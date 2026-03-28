@@ -2,9 +2,9 @@
 
 # 🍺 homebrew-cask
 
-**개인용 Homebrew Cask 저장소**
+**개인용 Homebrew Cask & Formula 저장소**
 
-공식 Homebrew에 등록되지 않은 앱들을 `brew` 명령어로 설치·관리합니다.
+공식 Homebrew에 등록되지 않은 앱과 CLI 도구를 `brew` 명령어로 설치·관리합니다.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![macOS](https://img.shields.io/badge/macOS-supported-blue?logo=apple)](https://brew.sh)
@@ -17,7 +17,12 @@
 
 ```bash
 brew tap leejongyoung/cask
+
+# Cask (GUI 앱) 설치
 brew install --cask gemini-alexcding
+
+# Formula (CLI 도구) 설치
+brew install leejongyoung/cask/treesnapshots
 ```
 
 > GitHub 저장소 이름이 `homebrew-cask`이면 `brew tap leejongyoung/cask`로 등록됩니다.
@@ -31,6 +36,15 @@ brew install --cask gemini-alexcding
 | [`gemini-alexcding`](Casks/g/gemini-alexcding.rb) | Gemini Desktop | 0.2.0 | Unofficial desktop app for Gemini |
 | [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard Security Solution (Anti-Keylogger) |
 | [`tcube`](Casks/t/tcube.rb) | TCube | latest | Browser-based virtualization solution for online exams |
+| [`treesnapshots`](Casks/t/treesnapshots.rb) | TREESNAPSHOTS | 2.0.0 | Track and version local file structures, sizes, and metadata |
+
+---
+
+## Formula 목록
+
+| Formula 토큰 | 버전 | 설명 |
+|--------------|:----:|------|
+| [`treesnapshots`](Formula/t/treesnapshots.rb) | 2.0.0 | Track and version local file structures, sizes, and metadata |
 
 ---
 
@@ -42,7 +56,7 @@ brew install --cask gemini-alexcding
 brew tap leejongyoung/cask
 ```
 
-### 설치 · 삭제
+### Cask 설치 · 삭제
 
 ```bash
 # 설치
@@ -58,12 +72,27 @@ brew uninstall --cask gemini-alexcding
 brew uninstall --zap --cask gemini-alexcding
 ```
 
+### Formula 설치 · 삭제
+
+```bash
+# 설치
+brew install leejongyoung/cask/treesnapshots
+
+# 업그레이드
+brew upgrade leejongyoung/cask/treesnapshots
+
+# 삭제
+brew uninstall treesnapshots
+```
+
 ### 상태 확인
 
 ```bash
 brew list --cask          # 설치된 Cask 목록
-brew outdated --cask      # 업데이트 가능한 Cask 확인
-brew info --cask gemini-alexcding   # Cask 상세 정보
+brew list --formula       # 설치된 Formula 목록
+brew outdated             # 업데이트 가능한 패키지 확인
+brew info --cask gemini-alexcding        # Cask 상세 정보
+brew info leejongyoung/cask/treesnapshots  # Formula 상세 정보
 ```
 
 ---
