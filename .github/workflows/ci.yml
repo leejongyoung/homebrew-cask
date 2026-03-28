@@ -45,6 +45,40 @@ jobs:
             echo "casks=$json" >> "$GITHUB_OUTPUT"
           fi
 
+  detect-formulas:
+    name: Detect changed formulas
+    runs-on: ubuntu-latest
+    outputs:
+      formulas: ${{ steps.changed.outputs.formulas }}
+      has_formulas: ${{ steps.changed.outputs.has_formulas }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed formula files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            files=$(find Formula -name "*.rb" 2>/dev/null | sort)
+          elif [ "${{ github.event_name }}" = "pull_request" ]; then
+            files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'Formula/**/*.rb')
+          else
+            files=$(git diff --name-only HEAD~1 HEAD -- 'Formula/**/*.rb')
+          fi
+
+          if [ -z "$files" ]; then
+            echo "has_formulas=false" >> "$GITHUB_OUTPUT"
+            echo "formulas=[]" >> "$GITHUB_OUTPUT"
+          else
+            # token 추출: "Formula/t/treesnap.rb" → "treesnap"
+            tokens=$(echo "$files" | sed 's|Formula/[^/]*/||;s|\.rb$||')
+            json=$(echo "$tokens" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+            echo "has_formulas=true" >> "$GITHUB_OUTPUT"
+            echo "formulas=$json" >> "$GITHUB_OUTPUT"
+          fi
+
   style:
     name: Style (${{ matrix.cask }})
     needs: detect
@@ -74,6 +108,35 @@ jobs:
         env:
           CASK: ${{ matrix.cask }}
 
+  style-formula:
+    name: Style Formula (${{ matrix.formula }})
+    needs: detect-formulas
+    if: needs.detect-formulas.outputs.has_formulas == 'true'
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        formula: ${{ fromJSON(needs.detect-formulas.outputs.formulas) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Cache Homebrew style cache
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew/style
+          key: brew-style-formula-${{ hashFiles(format('Formula/{0}/{1}.rb', matrix.formula[0], matrix.formula)) }}
+          restore-keys: brew-style-formula-
+
+      - name: Run brew style
+        run: |
+          brew style "Formula/${FORMULA:0:1}/$FORMULA.rb"
+        env:
+          FORMULA: ${{ matrix.formula }}
+
   audit:
     name: Audit (${{ matrix.cask }})
     needs: detect
@@ -97,4 +160,30 @@ jobs:
 
       - name: Run brew audit
         run: brew audit --cask --online "leejongyoung/cask/${{ matrix.cask }}"
+        timeout-minutes: 10
+
+  audit-formula:
+    name: Audit Formula (${{ matrix.formula }})
+    needs: detect-formulas
+    if: needs.detect-formulas.outputs.has_formulas == 'true'
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        formula: ${{ fromJSON(needs.detect-formulas.outputs.formulas) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Sync Formula to registered tap
+        run: |
+          tap_dir="$(brew --repository leejongyoung/cask)"
+          mkdir -p "$tap_dir/Formula"
+          rsync -a "$GITHUB_WORKSPACE/Formula/" "$tap_dir/Formula/"
+
+      - name: Run brew audit
+        run: brew audit --formula --online "leejongyoung/cask/${{ matrix.formula }}"
         timeout-minutes: 10

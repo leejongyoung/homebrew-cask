@@ -3,8 +3,16 @@ name: Install Test
 on:
   workflow_dispatch:
     inputs:
-      cask:
-        description: "Cask token to test (e.g. gemini-alexcding)"
+      type:
+        description: "Type of package to test"
+        required: true
+        type: choice
+        options:
+          - cask
+          - formula
+        default: cask
+      name:
+        description: "Package name to test (e.g. gemini-alexcding, treesnap)"
         required: true
         type: string
       skip_uninstall:
@@ -17,8 +25,9 @@ permissions:
   contents: read
 
 jobs:
-  install:
-    name: Install ${{ inputs.cask }}
+  install-cask:
+    name: Install Cask ${{ inputs.name }}
+    if: inputs.type == 'cask'
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -33,7 +42,7 @@ jobs:
           rsync -a "$GITHUB_WORKSPACE/Casks/" "$tap_dir/Casks/"
 
       - name: Fetch cask artifact
-        run: brew fetch --cask "leejongyoung/cask/${{ inputs.cask }}"
+        run: brew fetch --cask "leejongyoung/cask/${{ inputs.name }}"
         timeout-minutes: 30
 
       - name: Take pre-install system snapshot
@@ -43,7 +52,7 @@ jobs:
           cat /tmp/snapshot_before.txt
 
       - name: Install cask
-        run: brew install --cask "leejongyoung/cask/${{ inputs.cask }}"
+        run: brew install --cask "leejongyoung/cask/${{ inputs.name }}"
         timeout-minutes: 30
 
       - name: Take post-install system snapshot
@@ -54,4 +63,35 @@ jobs:
 
       - name: Uninstall cask (zap)
         if: ${{ !inputs.skip_uninstall }}
-        run: brew uninstall --zap --cask "leejongyoung/cask/${{ inputs.cask }}"
+        run: brew uninstall --zap --cask "leejongyoung/cask/${{ inputs.name }}"
+
+  install-formula:
+    name: Install Formula ${{ inputs.name }}
+    if: inputs.type == 'formula'
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@main
+
+      - name: Sync Formula to registered tap
+        run: |
+          tap_dir="$(brew --repository leejongyoung/cask)"
+          mkdir -p "$tap_dir/Formula"
+          rsync -a "$GITHUB_WORKSPACE/Formula/" "$tap_dir/Formula/"
+
+      - name: Install formula
+        run: brew install "leejongyoung/cask/${{ inputs.name }}"
+        timeout-minutes: 30
+
+      - name: Verify binary is available
+        run: brew list "leejongyoung/cask/${{ inputs.name }}"
+
+      - name: Run formula test
+        run: brew test "leejongyoung/cask/${{ inputs.name }}"
+
+      - name: Uninstall formula
+        if: ${{ !inputs.skip_uninstall }}
+        run: brew uninstall "leejongyoung/cask/${{ inputs.name }}"
