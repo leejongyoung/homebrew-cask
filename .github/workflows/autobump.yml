@@ -130,6 +130,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git add "Casks/${CASK:0:1}/$CASK.rb"
           git commit -m "chore: bump $CASK to ${{ steps.livecheck.outputs.latest }}"
           git push origin main
@@ -221,6 +222,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
           git add "Formula/${FORMULA:0:1}/$FORMULA.rb"
           git commit -m "chore: bump $FORMULA to ${{ steps.livecheck.outputs.latest }}"
           git push origin main
