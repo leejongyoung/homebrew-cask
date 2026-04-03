@@ -1,6 +1,6 @@
 cask "gemini-alexcding" do
-  version "0.2.0"
-  sha256 "6096abe9d25f4e4434f6c6a6b80da8424b0dc16e986188112993d89b8b1dd039"
+  version "0.2.1"
+  sha256 "794cbc3ecb092ac313fe1b31aea84c16bda718575d950b147164fbaea29fda42"
 
   url "https://github.com/alexcding/gemini-desktop-mac/releases/download/#{version}/GeminiDesktop.dmg"
   name "Gemini Desktop"
