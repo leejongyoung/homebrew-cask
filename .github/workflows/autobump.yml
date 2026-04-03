@@ -132,7 +132,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "Casks/${CASK:0:1}/$CASK.rb"
           git commit -m "chore: bump $CASK to ${{ steps.livecheck.outputs.latest }}"
-          git push
+          git push origin main
         env:
           CASK: ${{ matrix.cask }}
 
@@ -223,6 +223,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "Formula/${FORMULA:0:1}/$FORMULA.rb"
           git commit -m "chore: bump $FORMULA to ${{ steps.livecheck.outputs.latest }}"
-          git push
+          git push origin main
         env:
           FORMULA: ${{ matrix.formula }}
