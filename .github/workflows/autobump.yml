@@ -87,6 +87,7 @@ jobs:
         id: sha256
         if: steps.livecheck.outputs.outdated == 'true'
         run: |
+          set -o pipefail
           latest="${{ steps.livecheck.outputs.latest }}"
           cask_file="Casks/${CASK:0:1}/$CASK.rb"
 
@@ -97,6 +98,10 @@ jobs:
 
           echo "Downloading: $url"
           sha=$(curl -fsSL "$url" | shasum -a 256 | awk '{print $1}')
+          if [ -z "$sha" ]; then
+            echo "ERROR: sha256 is empty (download may have failed)"
+            exit 1
+          fi
           echo "sha256=$sha" >> "$GITHUB_OUTPUT"
         env:
           CASK: ${{ matrix.cask }}
@@ -178,6 +183,7 @@ jobs:
         id: sha256
         if: steps.livecheck.outputs.outdated == 'true'
         run: |
+          set -o pipefail
           current="${{ steps.livecheck.outputs.current }}"
           latest="${{ steps.livecheck.outputs.latest }}"
           formula_file="Formula/${FORMULA:0:1}/$FORMULA.rb"
@@ -189,6 +195,10 @@ jobs:
 
           echo "Downloading: $url"
           sha=$(curl -fsSL "$url" | shasum -a 256 | awk '{print $1}')
+          if [ -z "$sha" ]; then
+            echo "ERROR: sha256 is empty (download may have failed)"
+            exit 1
+          fi
           echo "sha256=$sha" >> "$GITHUB_OUTPUT"
         env:
           FORMULA: ${{ matrix.formula }}
