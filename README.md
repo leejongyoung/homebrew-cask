@@ -19,7 +19,7 @@
 brew tap leejongyoung/cask
 
 # Cask (GUI 앱) 설치
-brew install --cask gemini-alexcding
+brew install --cask leejongyoung/cask/treesnapshots
 
 # Formula (CLI 도구) 설치
 brew install leejongyoung/cask/treesnapshots-cli
@@ -33,8 +33,7 @@ brew install leejongyoung/cask/treesnapshots-cli
 
 | Cask 토큰 | 앱 이름 | 버전 | 설명 |
 |-----------|---------|:----:|------|
-| [`gemini-alexcding`](Casks/g/gemini-alexcding.rb) | Gemini Desktop | 0.2.0 | Unofficial desktop app for Gemini |
-| [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard Security Solution (Anti-Keylogger) |
+| [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard security software that blocks keyloggers |
 | [`tcube`](Casks/t/tcube.rb) | TCube | latest | Browser-based virtualization solution for online exams |
 | [`treesnapshots`](Casks/t/treesnapshots.rb) | TREESNAPSHOTS | 2.0.3 | Track and version local file structures, sizes, and metadata |
 
@@ -60,16 +59,16 @@ brew tap leejongyoung/cask
 
 ```bash
 # 설치
-brew install --cask gemini-alexcding
+brew install --cask leejongyoung/cask/treesnapshots
 
 # 업그레이드
-brew upgrade --cask gemini-alexcding
+brew upgrade --cask leejongyoung/cask/treesnapshots
 
 # 삭제
-brew uninstall --cask gemini-alexcding
+brew uninstall --cask leejongyoung/cask/treesnapshots
 
 # 완전 삭제 — 앱 데이터·캐시·설정 파일까지 제거 (zap)
-brew uninstall --zap --cask gemini-alexcding
+brew uninstall --zap --cask leejongyoung/cask/treesnapshots
 ```
 
 ### Formula 설치 · 삭제
@@ -91,44 +90,37 @@ brew uninstall treesnapshots-cli
 brew list --cask          # 설치된 Cask 목록
 brew list --formula       # 설치된 Formula 목록
 brew outdated             # 업데이트 가능한 패키지 확인
-brew info --cask gemini-alexcding        # Cask 상세 정보
+brew info --cask leejongyoung/cask/treesnapshots  # Cask 상세 정보
 brew info leejongyoung/cask/treesnapshots-cli  # Formula 상세 정보
 ```
 
 ---
 
-## Cask 업데이트
+## 버전 업데이트
 
-새 버전이 릴리스됐을 때 아래 순서로 Cask 파일을 업데이트합니다.
+**자동** — `autobump.yml`이 매일 18:00(KST)에 모든 Cask와 Formula를 `brew livecheck`로 확인합니다. 새 버전이 있으면 `version`과 `sha256`을 고쳐서 `main`에 바로 커밋합니다. Formula는 macOS·Linux URL마다 sha256을 따로 계산합니다.
 
-**1단계 — SHA256 체크섬 계산**
+`version :latest`인 Cask(`tcube`, `touchen-nxkey`)는 항상 배포처의 최신 파일을 받으므로 자동 업데이트 대상이 아닙니다.
 
-```bash
-curl -fsSL https://github.com/alexcding/gemini-desktop-mac/releases/download/<VERSION>/GeminiDesktop.dmg \
-  | shasum -a 256
-```
-
-**2단계 — `Casks/gemini-alexcding.rb` 수정**
-
-`version`과 `sha256` 두 줄만 교체합니다. URL은 `#{version}` 보간을 사용하므로 별도 수정이 불필요합니다.
-
-```ruby
-version "<NEW_VERSION>"
-sha256  "<NEW_SHA256>"
-```
-
-**3단계 — 커밋 & Push**
+**수동** — 자동 업데이트가 실패했거나 바로 올리고 싶을 때:
 
 ```bash
-git add Casks/gemini-alexcding.rb
-git commit -m "chore: bump gemini-alexcding to <VERSION>"
-git push
+# Cask: version과 sha256 두 줄만 교체 (URL은 #{version} 보간)
+curl -fsSL <새 버전 다운로드 URL> | shasum -a 256
+
+# Formula: URL마다 sha256을 계산해 교체
+python3 .github/scripts/bump-formula.py Formula/t/treesnapshots-cli.rb 2.0.3 2.0.4
+
+# 검증 후 커밋
+brew style --fix Casks/<첫글자>/<cask>.rb
+brew audit --cask --online leejongyoung/cask/<cask>
+git commit -am "chore: bump <cask> to <version>"
 ```
 
-**4단계 — 로컬 반영**
+로컬 반영:
 
 ```bash
-brew update && brew upgrade --cask gemini-alexcding
+brew update && brew upgrade --cask leejongyoung/cask/<cask>
 ```
 
 ---
@@ -154,6 +146,7 @@ brew update && brew upgrade --cask gemini-alexcding
 | `name` | 앱의 공식 전체 이름 |
 | `desc` | 80자 이내 한 줄 설명. 마케팅 문구·플랫폼 언급 지양 |
 | `homepage` | 공식 홈페이지 |
+| `depends_on` | macOS 전용이면 `depends_on :macos` (최신 `brew style` 필수) |
 | artifact | 설치 대상 선언 (`app`, `pkg`, `binary` 중 하나 이상) |
 
 ### 스탠자 작성 순서
@@ -161,7 +154,7 @@ brew update && brew upgrade --cask gemini-alexcding
 Cask Cookbook 권장 순서를 따릅니다.
 
 ```
-version → sha256 → url → name → desc → homepage → (artifact) → zap
+version → sha256 → url → name → desc → homepage → (livecheck) → depends_on → (artifact) → (uninstall) → zap
 ```
 
 ### 템플릿
@@ -175,6 +168,8 @@ cask "<cask-name>" do
   name "<App Display Name>"
   desc "<80자 이내 설명>"
   homepage "https://example.com"
+
+  depends_on :macos
 
   app "<App Name>.app"
 
@@ -191,6 +186,15 @@ SHA256 체크섬 계산:
 ```bash
 curl -fsSL <download-url> | shasum -a 256
 ```
+
+---
+
+## 브랜치
+
+| 브랜치 | 내용 |
+|--------|------|
+| `main` | 이 tap의 Cask · Formula · 워크플로 |
+| `homebrew` | `sync-homebrew.yml`이 매일 공식 [Homebrew/homebrew-cask](https://github.com/Homebrew/homebrew-cask)를 동기화한 사본 (직접 수정하지 않음) |
 
 ---
 
