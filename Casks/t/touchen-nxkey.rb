@@ -4,8 +4,10 @@ cask "touchen-nxkey" do
 
   url "https://download.raonsecure.com/TouchEnnxKey/current/mac/TouchEn_nxKey_Installer.pkg"
   name "TouchEn nxKey"
-  desc "Keyboard Security Solution (Anti-Keylogger)"
+  desc "Keyboard security software that blocks keyloggers"
   homepage "https://www.raonsecure.com/"
+
+  depends_on :macos
 
   pkg "TouchEn_nxKey_Installer.pkg"
 

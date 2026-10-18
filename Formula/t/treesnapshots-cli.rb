@@ -11,6 +11,11 @@ class TreesnapshotsCli < Formula
     sha256 "cd0e855b05dbeaadd43f4509cee6afeb20bcf9c68ea2c5c554282a77e3da83db"
   end
 
+  on_linux do
+    # Releases ship a Linux binary for x86_64 only
+    depends_on arch: :x86_64
+  end
+
   def install
     bin.install "treesnapshots-cli"
   end

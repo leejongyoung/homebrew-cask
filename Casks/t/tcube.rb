@@ -6,7 +6,9 @@ cask "tcube" do
       verified: "lms.kmooc.kr/webcube/components/"
   name "TCube"
   desc "Browser-based virtualization solution for online exams"
-  homepage "http://www.teruten.com/kr/solution/virtualization.php"
+  homepage "https://www.teruten.com/kr/solution/virtualization.php"
+
+  depends_on :macos
 
   pkg "TCubeMac.pkg"
 

@@ -12,6 +12,8 @@ cask "treesnapshots" do
     strategy :github_latest
   end
 
+  depends_on :macos
+
   app "TREESNAPSHOTS.app"
 
   zap trash: [
