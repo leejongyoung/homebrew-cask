@@ -12,7 +12,7 @@ on:
           - formula
         default: cask
       name:
-        description: "Package name to test (e.g. gemini-alexcding, treesnap)"
+        description: "Package name to test (e.g. treesnapshots, treesnapshots-cli)"
         required: true
         type: string
       skip_uninstall:

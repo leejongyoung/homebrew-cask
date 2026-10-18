@@ -31,14 +31,19 @@ jobs:
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             files=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- 'Casks/**/*.rb')
           else
-            files=$(git diff --name-only --diff-filter=d HEAD~1 HEAD -- 'Casks/**/*.rb')
+            # Compare against the commit before the push so multi-commit pushes are covered
+            base="${{ github.event.before }}"
+            if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+              base=HEAD~1
+            fi
+            files=$(git diff --name-only --diff-filter=d "$base" HEAD -- 'Casks/**/*.rb')
           fi
 
           if [ -z "$files" ]; then
             echo "has_casks=false" >> "$GITHUB_OUTPUT"
             echo "casks=[]" >> "$GITHUB_OUTPUT"
           else
-            # token 추출: "Casks/g/gemini-alexcding.rb" → "gemini-alexcding"
+            # token 추출: "Casks/t/treesnapshots.rb" → "treesnapshots"
             tokens=$(echo "$files" | sed 's|Casks/[^/]*/||;s|\.rb$||')
             json=$(echo "$tokens" | jq -R -s -c 'split("\n") | map(select(length > 0))')
             echo "has_casks=true" >> "$GITHUB_OUTPUT"
@@ -65,14 +70,19 @@ jobs:
           elif [ "${{ github.event_name }}" = "pull_request" ]; then
             files=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }}...HEAD -- 'Formula/**/*.rb')
           else
-            files=$(git diff --name-only --diff-filter=d HEAD~1 HEAD -- 'Formula/**/*.rb')
+            # Compare against the commit before the push so multi-commit pushes are covered
+            base="${{ github.event.before }}"
+            if [ -z "$base" ] || ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+              base=HEAD~1
+            fi
+            files=$(git diff --name-only --diff-filter=d "$base" HEAD -- 'Formula/**/*.rb')
           fi
 
           if [ -z "$files" ]; then
             echo "has_formulas=false" >> "$GITHUB_OUTPUT"
             echo "formulas=[]" >> "$GITHUB_OUTPUT"
           else
-            # token 추출: "Formula/t/treesnap.rb" → "treesnap"
+            # token 추출: "Formula/t/treesnapshots-cli.rb" → "treesnapshots-cli"
             tokens=$(echo "$files" | sed 's|Formula/[^/]*/||;s|\.rb$||')
             json=$(echo "$tokens" | jq -R -s -c 'split("\n") | map(select(length > 0))')
             echo "has_formulas=true" >> "$GITHUB_OUTPUT"

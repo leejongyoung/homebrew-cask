@@ -21,7 +21,9 @@ jobs:
       - name: Scan Casks directory
         id: scan
         run: |
-          json=$(find Casks -name "*.rb" | sed 's|Casks/[^/]*/||;s|\.rb$||' | sort \
+          # version :latest casks have nothing to bump
+          json=$(find Casks -name "*.rb" -exec grep -L 'version :latest' {} + \
+            | sed 's|Casks/[^/]*/||;s|\.rb$||' | sort \
             | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "casks=$json" >> "$GITHUB_OUTPUT"
 
@@ -51,6 +53,7 @@ jobs:
   autobump:
     name: Autobump ${{ matrix.cask }}
     needs: detect
+    if: needs.detect.outputs.casks != '[]'
     runs-on: macos-latest
     strategy:
       fail-fast: false
@@ -179,45 +182,15 @@ jobs:
             echo "outdated=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Compute SHA256 for new version
-        id: sha256
-        if: steps.livecheck.outputs.outdated == 'true'
-        run: |
-          set -o pipefail
-          current="${{ steps.livecheck.outputs.current }}"
-          latest="${{ steps.livecheck.outputs.latest }}"
-          formula_file="Formula/${FORMULA:0:1}/$FORMULA.rb"
-
-          # url에서 현재 버전을 최신 버전으로 치환해 실제 URL 생성
-          url=$(grep '^\s*url ' "$formula_file" \
-            | sed 's/.*url "\(.*\)"/\1/' \
-            | sed "s/$current/$latest/g")
-
-          echo "Downloading: $url"
-          sha=$(curl -fsSL "$url" | shasum -a 256 | awk '{print $1}')
-          if [ -z "$sha" ]; then
-            echo "ERROR: sha256 is empty (download may have failed)"
-            exit 1
-          fi
-          echo "sha256=$sha" >> "$GITHUB_OUTPUT"
-        env:
-          FORMULA: ${{ matrix.formula }}
-
       - name: Update formula file
         if: steps.livecheck.outputs.outdated == 'true'
         run: |
-          formula_file="Formula/${FORMULA:0:1}/$FORMULA.rb"
-          current="${{ steps.livecheck.outputs.current }}"
-          latest="${{ steps.livecheck.outputs.latest }}"
-          sha256="${{ steps.sha256.outputs.sha256 }}"
-
-          sed -i '' \
-            -e "s|$current|$latest|g" \
-            -e "s|sha256 \".*\"|sha256 \"$sha256\"|" \
-            "$formula_file"
-
-          echo "=== Updated $formula_file ==="
-          cat "$formula_file"
+          # Each url (macOS, Linux, ...) gets the sha256 of its own download,
+          # written to the sha256 line that follows it.
+          python3 .github/scripts/bump-formula.py \
+            "Formula/${FORMULA:0:1}/$FORMULA.rb" \
+            "${{ steps.livecheck.outputs.current }}" \
+            "${{ steps.livecheck.outputs.latest }}"
         env:
           FORMULA: ${{ matrix.formula }}
 
