@@ -34,7 +34,7 @@ brew install leejongyoung/cask/treesnapshots-cli
 | Cask 토큰 | 앱 이름 | 버전 | 설명 |
 |-----------|---------|:----:|------|
 | [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard security software that blocks keyloggers |
-| [`tcube`](Casks/t/tcube.rb) | TCube | latest | Browser-based virtualization solution for online exams |
+| [`tcube`](Casks/t/tcube.rb) | TCube | 4.71 | Browser-based virtualization solution for online exams |
 | [`treesnapshots`](Casks/t/treesnapshots.rb) | TREESNAPSHOTS | 2.0.3 | Track and version local file structures, sizes, and metadata |
 | [`unisign`](Casks/u/unisign.rb) | UniSign | 3.0.0 | Cross-certification security program for Korean financial/education sites |
 ---
