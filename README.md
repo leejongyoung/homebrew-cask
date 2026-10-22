@@ -37,6 +37,7 @@ brew install leejongyoung/cask/treesnapshots-cli
 | [`tcube`](Casks/t/tcube.rb) | TCube | 4.71 | Browser-based virtualization solution for online exams |
 | [`treesnapshots`](Casks/t/treesnapshots.rb) | TREESNAPSHOTS | 2.0.3 | Track and version local file structures, sizes, and metadata |
 | [`unisign`](Casks/u/unisign.rb) | UniSign | 3.0.0 | Cross-certification security program for Korean financial/education sites |
+| [`yoondisk-https-mac`](Casks/y/yoondisk-https-mac.rb) | Yoondisk Html_Mac | 4.0 | Local helper that reports the hardware address to e그린 computer registration |
 ---
 
 ## Formula 목록
