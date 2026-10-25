@@ -19,10 +19,10 @@
 brew tap leejongyoung/cask
 
 # Cask (GUI 앱) 설치
-brew install --cask leejongyoung/cask/treesnapshots
+brew install --cask leejongyoung/cask/<cask>
 
 # Formula (CLI 도구) 설치
-brew install leejongyoung/cask/treesnapshots-cli
+brew install leejongyoung/cask/<formula>
 ```
 
 > GitHub 저장소 이름이 `homebrew-cask`이면 `brew tap leejongyoung/cask`로 등록됩니다.
@@ -35,16 +35,13 @@ brew install leejongyoung/cask/treesnapshots-cli
 |-----------|---------|:----:|------|
 | [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard security software that blocks keyloggers |
 | [`tcube`](Casks/t/tcube.rb) | TCube | 4.71 | Browser-based virtualization solution for online exams |
-| [`treesnapshots`](Casks/t/treesnapshots.rb) | TREESNAPSHOTS | 2.0.3 | Track and version local file structures, sizes, and metadata |
 | [`unisign`](Casks/u/unisign.rb) | UniSign | 3.0.0 | Cross-certification security program for Korean financial/education sites |
 | [`yoondisk-https-mac`](Casks/y/yoondisk-https-mac.rb) | Yoondisk Html_Mac | 4.0 | Local helper that reports the hardware address to e그린 computer registration |
 ---
 
 ## Formula 목록
 
-| Formula 토큰 | 버전 | 설명 |
-|--------------|:----:|------|
-| [`treesnapshots-cli`](Formula/t/treesnapshots-cli.rb) | 2.0.3 | Track and version local file structures, sizes, and metadata |
+현재 등록된 Formula가 없습니다. 새 Formula는 `Formula/<첫글자>/<formula>.rb`에 추가합니다.
 
 ---
 
@@ -60,29 +57,29 @@ brew tap leejongyoung/cask
 
 ```bash
 # 설치
-brew install --cask leejongyoung/cask/treesnapshots
+brew install --cask leejongyoung/cask/<cask>
 
 # 업그레이드
-brew upgrade --cask leejongyoung/cask/treesnapshots
+brew upgrade --cask leejongyoung/cask/<cask>
 
 # 삭제
-brew uninstall --cask leejongyoung/cask/treesnapshots
+brew uninstall --cask leejongyoung/cask/<cask>
 
 # 완전 삭제 — 앱 데이터·캐시·설정 파일까지 제거 (zap)
-brew uninstall --zap --cask leejongyoung/cask/treesnapshots
+brew uninstall --zap --cask leejongyoung/cask/<cask>
 ```
 
 ### Formula 설치 · 삭제
 
 ```bash
 # 설치
-brew install leejongyoung/cask/treesnapshots-cli
+brew install leejongyoung/cask/<formula>
 
 # 업그레이드
-brew upgrade leejongyoung/cask/treesnapshots-cli
+brew upgrade leejongyoung/cask/<formula>
 
 # 삭제
-brew uninstall treesnapshots-cli
+brew uninstall <formula>
 ```
 
 ### 상태 확인
@@ -91,8 +88,8 @@ brew uninstall treesnapshots-cli
 brew list --cask          # 설치된 Cask 목록
 brew list --formula       # 설치된 Formula 목록
 brew outdated             # 업데이트 가능한 패키지 확인
-brew info --cask leejongyoung/cask/treesnapshots  # Cask 상세 정보
-brew info leejongyoung/cask/treesnapshots-cli  # Formula 상세 정보
+brew info --cask leejongyoung/cask/<cask>  # Cask 상세 정보
+brew info leejongyoung/cask/<formula>  # Formula 상세 정보
 ```
 
 ---
@@ -110,7 +107,7 @@ brew info leejongyoung/cask/treesnapshots-cli  # Formula 상세 정보
 curl -fsSL <새 버전 다운로드 URL> | shasum -a 256
 
 # Formula: URL마다 sha256을 계산해 교체
-python3 .github/scripts/bump-formula.py Formula/t/treesnapshots-cli.rb 2.0.3 2.0.4
+python3 .github/scripts/bump-formula.py Formula/<첫글자>/<formula>.rb <이전 버전> <새 버전>
 
 # 검증 후 커밋
 brew style --fix Casks/<첫글자>/<cask>.rb

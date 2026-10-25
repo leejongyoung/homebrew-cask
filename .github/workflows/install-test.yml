@@ -12,7 +12,7 @@ on:
           - formula
         default: cask
       name:
-        description: "Package name to test (e.g. treesnapshots, treesnapshots-cli)"
+        description: "Package name to test (e.g. tcube, touchen-nxkey)"
         required: true
         type: string
       skip_uninstall:

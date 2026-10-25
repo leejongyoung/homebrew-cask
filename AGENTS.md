@@ -19,11 +19,8 @@ homebrew-cask/
 ├── Casks/
 │   └── t/
 │       ├── tcube.rb
-│       ├── touchen-nxkey.rb
-│       └── treesnapshots.rb
-├── Formula/
-│   └── t/
-│       └── treesnapshots-cli.rb
+│       └── touchen-nxkey.rb
+├── Formula/                      # 현재 비어 있음 (Formula/<첫글자>/<formula>.rb)
 ├── AGENTS.md
 ├── CLAUDE.md                     # → @AGENTS.md
 ├── LICENSE
