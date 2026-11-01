@@ -100,7 +100,7 @@ brew info leejongyoung/cask/<formula>  # Formula 상세 정보
 
 **자동** — `autobump.yml`이 매일 18:00(KST)에 모든 Cask와 Formula를 `brew livecheck`로 확인합니다. 새 버전이 있으면 `version`과 `sha256`을 고쳐서 `main`에 바로 커밋합니다. Formula는 macOS·Linux URL마다 sha256을 따로 계산합니다.
 
-`version :latest`인 Cask(`tcube`, `touchen-nxkey`)는 항상 배포처의 최신 파일을 받으므로 자동 업데이트 대상이 아닙니다.
+`version :latest`인 Cask(`touchen-nxkey`, `wizvera-delfino`, `ahnlab-safe-transaction`)는 항상 배포처의 최신 파일을 받으므로 자동 업데이트 대상이 아닙니다. `tcube`는 명시 버전(`4.71`)을 쓰므로 스캔 제외 대상이 아닙니다. 단, 스캔 대상이라는 사실이 `brew livecheck`의 새 버전 탐색 성공을 보장하지는 않습니다.
 
 **수동** — 자동 업데이트가 실패했거나 바로 올리고 싶을 때:
 
