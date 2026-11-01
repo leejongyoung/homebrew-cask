@@ -33,9 +33,11 @@ brew install leejongyoung/cask/<formula>
 
 | Cask 토큰 | 앱 이름 | 버전 | 설명 |
 |-----------|---------|:----:|------|
+| [`ahnlab-safe-transaction`](Casks/a/ahnlab-safe-transaction.rb) | AhnLab Safe Transaction | latest | Keyboard security, antivirus/firewall and anti-phishing for banking |
 | [`touchen-nxkey`](Casks/t/touchen-nxkey.rb) | TouchEn nxKey | latest | Keyboard security software that blocks keyloggers |
 | [`tcube`](Casks/t/tcube.rb) | TCube | 4.71 | Browser-based virtualization solution for online exams |
 | [`unisign`](Casks/u/unisign.rb) | UniSign | 3.0.0 | Cross-certification security program for Korean financial/education sites |
+| [`wizvera-delfino`](Casks/w/wizvera-delfino.rb) | Wizvera Delfino G3 | latest | Electronic signature and user authentication (Wizvera Delfino G3) |
 | [`yoondisk-https-mac`](Casks/y/yoondisk-https-mac.rb) | Yoondisk Html_Mac | 4.0 | Local helper that reports the hardware address to e그린 computer registration |
 ---
 
