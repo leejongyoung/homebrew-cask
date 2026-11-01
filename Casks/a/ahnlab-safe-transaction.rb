@@ -7,7 +7,7 @@ cask "ahnlab-safe-transaction" do
   desc "Keyboard security, antivirus/firewall and anti-phishing for banking"
   homepage "https://www.ahnlab.com/"
 
-  depends_on :macos
+  depends_on macos: :monterey
 
   pkg "ASTx.pkg"
 
