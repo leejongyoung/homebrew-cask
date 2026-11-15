@@ -1,6 +1,6 @@
 cask "tcube" do
   version "4.71"
-  sha256 :no_check
+  sha256 "c12b48efb0fdfe06059cb2d7b3434f1abf76676c285ab90e979902efe56e5117"
 
   url "https://lms.kmooc.kr/webcube/components/TCubeMac.pkg"
   name "TCube"
