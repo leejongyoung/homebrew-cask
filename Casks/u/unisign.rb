@@ -1,6 +1,6 @@
 cask "unisign" do
   version "3.0.0"
-  sha256 :no_check
+  sha256 "40391e0982b0d8c96179002b0640463af34b26ee26fe2fc0042c4c51329cc68d"
 
   url "https://unisign.co.kr/EXE/install/UniSignCRSV3Setup.pkg"
   name "UniSign"

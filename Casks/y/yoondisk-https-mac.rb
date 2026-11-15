@@ -1,6 +1,6 @@
 cask "yoondisk-https-mac" do
   version "4.0"
-  sha256 :no_check
+  sha256 "d1cb3733573385ccf7dc705189956d5fdd44ff45ffef69cbab74346a14d33033"
 
   url "https://cb.egreen.co.kr/myclass/studypcinfo/mac_address/Yoondisk_Https_mac.pkg",
       user_agent: :fake
